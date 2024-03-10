@@ -3,28 +3,39 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { GraphEngine } from './GraphEngine';
 import { Bar } from './types';
+import { FormsModule } from '@angular/forms';
 import { generateRandomVariablesSum } from './utils';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule, RouterOutlet, FormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.less'
 })
 export class AppComponent implements AfterViewInit {
 
   @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
+  isSettingsOpen: boolean = true;
+  isQuestionModalOpen: boolean = false;
   graphEngine: GraphEngine = new GraphEngine();
   canvas: HTMLCanvasElement;
+  intervals: any = [];
+  timeouts: any = [];
   ctx: CanvasRenderingContext2D;
   bars: Bar[] = [];
 
   // Quantidade inicial de barras
-  barsQuantity: number = 8000;
+  barsQuantity: number = 100;
+
+  // Quantidade de variáveis aleatórias que serão somadas
+  variablesQuantity: number = 1;
 
   // Tempo em segundos que o código irá ficar distribuindo tamanhos aleatoriamente entre as barras
-  randomDistributionTimeoutSeconds: number = 8;
+  randomDistributionTimeoutSeconds: number = 5;
+
+  // Velocidade da distribuição
+  speedSelected = "1x";
 
   get canvasWidth() {
     return this.ctx?.canvas.width || 0;
@@ -34,14 +45,25 @@ export class AppComponent implements AfterViewInit {
     return this.ctx?.canvas.height || 0;
   }
 
+  get speed() {
+    switch (this.speedSelected) {
+      case "0.5x":
+        return 160;
+      case "1x":
+        return 40;
+      case "2x":
+        return 10;
+      default:
+        return 40;
+    }
+  }
+
   ngAfterViewInit(): void {
     this.canvas = this.canvasRef!.nativeElement;
     this.ctx = this.canvas.getContext('2d')!;
     this.updateCanvasSize();
     this.generateBars();
     this.run();
-
-    this.runRandomDistribution();
   }
 
   generateBars() {
@@ -67,22 +89,29 @@ export class AppComponent implements AfterViewInit {
 
   /* Aumenta o height das barras de forma aleatória durante X segundos */
   runRandomDistribution() {
+    this.clearIntervals();
+    this.clearTimeouts();
+    this.generateBars();
+
+    const variablesQuantity = this.variablesQuantity;
+
     /* Quantas alterações irão ocorrer ao mesmo tempo em cada intervalo */
-    const bundleSize = Math.max(this.bars.length / 20, 1);
+    const bundleSize = Math.max(this.bars.length / this.speed, 1);
     /* Tempo em milissegundos que as alterações de height acontecem */
     const changeHeightInterval = 1;
+
+    let intervalInMs = this.bars.length <= 10 ? 10 : changeHeightInterval;
     
-    const interval_id = setInterval(() => {
+    this.intervals.push(setInterval(() => {
       for (let i = 0; i < bundleSize; i++) {
-        // TO DO: Escolher (pelo parâmetro da função) quantos números aleatórios serão somados
-        const randomIndex = generateRandomVariablesSum(2, 0, this.bars.length - 1);
+        const randomIndex = generateRandomVariablesSum(variablesQuantity, 0, this.bars.length - 1);
         this.bars[randomIndex].height += 10;
       }
-    }, changeHeightInterval);
-    
-    setTimeout(() => {
-      window.clearInterval(interval_id);
-    }, this.randomDistributionTimeoutSeconds * 1000);
+    }, intervalInMs));
+
+    this.timeouts.push(setTimeout(() => {
+      this.clearIntervals();
+    }, this.randomDistributionTimeoutSeconds * 1000));
   }
 
   run() {
@@ -103,5 +132,29 @@ export class AppComponent implements AfterViewInit {
   drawBackground(ctx: CanvasRenderingContext2D) {
     ctx.fillStyle = "#0d1117";
     ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+  }
+
+  clearIntervals() {
+    this.intervals.forEach((interval_id: any) => window.clearInterval(interval_id));
+  }
+
+  clearTimeouts() {
+    this.timeouts.forEach((timeout_id: any) => window.clearTimeout(timeout_id));
+  }
+
+  changeBarsQuantity(event: any) {
+    const newBarsQuantity = parseInt(event.target.value);
+
+    if (!isNaN(newBarsQuantity)) {
+      this.barsQuantity = newBarsQuantity;
+    }
+  }
+
+  closeQuestionModalWhenClickOutside(event: any) {
+    try {
+      if (event.target.classList.contains('question-modal')) {
+        this.isQuestionModalOpen = false; 
+      }
+    } catch(e) {}
   }
 }

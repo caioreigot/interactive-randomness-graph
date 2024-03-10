@@ -2,18 +2,18 @@ import { Bar, BidimensionalSize } from "./types";
 
 export class GraphEngine {
 
-  private noGapQuantity: number = 1000;
+  private initialBarHeight = 40;
+  private noGapQuantity: number = 400;
 
   getGraphGap(barsQuantity: number) {
     // Por padrão é 4 pixels
     let graphGap: number = 4;
-    let noGapQuantity: number = 400;
 
     if (barsQuantity >= 200 && barsQuantity < 300) {
       graphGap = 2;
-    } else if (barsQuantity >= 300 && barsQuantity < noGapQuantity) {
+    } else if (barsQuantity >= 300 && barsQuantity < this.noGapQuantity) {
       graphGap = 1;
-    } else if (barsQuantity >= noGapQuantity) {
+    } else if (barsQuantity >= this.noGapQuantity) {
       graphGap = 0;
     }
 
@@ -23,7 +23,6 @@ export class GraphEngine {
   generateBars(quantity: number, canvasSize: BidimensionalSize) {
     const bars: Bar[] = [];
     const graphGap = this.getGraphGap(quantity);
-    const barHeight = 50;
 
     for (let i = 0; i < quantity; i++) {
       // this.barsGap * (quantity - 1) é a quantidade de gaps que terão (ex: com duas barras, há apenas um gap, com três barras, há dois gaps...)
@@ -33,9 +32,9 @@ export class GraphEngine {
       
       bars.push({
         width: barWidth,
-        height: barHeight,
+        height: this.initialBarHeight,
         x: currentX,
-        y: canvasSize.height - barHeight,
+        y: canvasSize.height - this.initialBarHeight,
       });
     }
 

@@ -1,2 +1,126 @@
-<!-- If the user's browser does not support the canvas, the message will appear -->
+<!-- Se o navegador do usuário não tiver suporte ao canvas, a mensagem irá aparecer -->
 <canvas #canvas id="canvas">Your browser does not support canvas</canvas>
+
+<div class="settings-container">
+  <img class="question-button" src="/assets/question.svg" (click)="isQuestionModalOpen = true">
+
+  <div class="question-modal" *ngIf="isQuestionModalOpen" (click)="closeQuestionModalWhenClickOutside($event)">
+    <div class="question-container">
+      <img class="close-button" src="/assets/close.svg" (click)="isQuestionModalOpen = false">
+
+      <div>
+        <h3>
+          O que este programa faz?
+        </h3>
+        <p>
+          Como você percebeu, há várias barras (por padrão {{barsQuantity}}, mas pode ser alterado) na parte inferior do site. Ao clicar no botão "Rodar", o código
+          irá sortear uma barra aleatória e aumentar ligeiramente seu tamanho vertical durante o período de tempo que você definir nas configurações.
+        </p>
+      </div>
+
+      <div>
+        <h3>
+          O que é aquela opção de "quantidade de números aleatórios somados"?
+        </h3>
+        <p>
+          Como dito anteriormente, barras aleatórias são sorteadas enquanto o código está rodando, na prática: se houver 100 barras, o código irá sortear um número entre
+          1 e 100, aumentando o tamanho vertical da barra de número sorteado, e este é o comportamento padrão (quando a configuração "quantidade de números aleatórios somados" é 1).
+          <br><br>
+          Mas, e se mudarmos o valor dessa configuração para 2? Neste caso, o código irá sortear <b>dois</b> números aleatórios, somar eles, e o resultado será a barra que terá seu
+          tamanho vertical incrementado. Na prática, com 100 barras, o código irá sortear um número entre 1 e 50 duas vezes e somá-los (o sorteio de cada variável vai estar sempre em um
+          intervalo dado pela <b>quantidade de barras / quantidade de variáveis</b>.
+        </p>
+      </div>
+
+      <div>
+        <h3>
+          Qual a finalidade?
+        </h3>
+        <p>
+          Te mostrar visualmente como os números aleatórias se comportam em um gráfico, mas, principalmente, responder à uma pergunta: <b>o que acontece ao somar dois (ou mais) números aleatórios?</b>
+          Suas aleatoriedades se somam e seu resultado é ainda mais aleatório? A aleatoriedade diminui? Se mantêm?
+          <br><br>
+          A resposta é: a aleatoriedade diminui! Quanto mais variáveis aleatórias somadas, mais concentrado os resultados ficarão na média, isso é explicado pelo <b>teorema central do limite</b>.
+          <br><br>
+          Veja por você mesmo: aumente o número de barras (recomendo 500) e aumente a quantidade de números aleatórios somados para 2. Você verá um formato triangular no gráfico. Agora aumente a quantidade
+          de números aleatórios somados para 3. Você irá ver um formato mais curvo, essa distribuição é bem famosa e se chama distribuição normal ou Gaussiana, e é uma das mais importantes distribuições
+          teóricas e práticas. Quanto maior a quantidade de números aleatórios somados, mais concentrada fica a distribuição e mais previsível ela se torna (e quanto mais previsível, menos aleatória).
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <button class="open-settings-button"
+    [ngClass]="{active: isSettingsOpen}"
+    title="Abre/fecha as configurações"
+    (click)="isSettingsOpen = !isSettingsOpen">
+    
+    <img src="/assets/settings.svg">
+  </button>
+  
+  <div *ngIf="isSettingsOpen" class="settings-options">
+    <div>
+      <label for="bars-quantity">
+        Quantidade de barras:
+      </label>
+  
+      <div class="inputs">
+        <input type="range"
+          id="bars-quantity"
+          name="bars-quantity"
+          min="3" max="50000"
+          [(ngModel)]="barsQuantity" />
+        
+          <input type="number" [(ngModel)]="barsQuantity">
+      </div>
+    </div>
+
+    <div>
+      <label for="variables-quantity">
+        Quantidade de números aleatórios somados:
+      </label>
+  
+      <div class="inputs">
+        <input type="range"
+        id="variables-quantity"
+        name="variables-quantity"
+        min="1" max="1000"
+        [(ngModel)]="variablesQuantity" />
+
+        <input type="number" [(ngModel)]="variablesQuantity">
+      </div>
+    </div>
+
+    <div>
+      <label for="execution-time">
+        Quantos segundos de execução:
+      </label>
+      
+      <div class="inputs">
+        <input type="range"
+        id="execution-time"
+        name="execution-time"
+        min="1" max="20"
+        [(ngModel)]="randomDistributionTimeoutSeconds" />
+
+        <input type="number" [(ngModel)]="randomDistributionTimeoutSeconds">
+      </div>
+    </div>
+
+    <div class="speed-buttons-container">
+      <button [ngClass]="{active: speedSelected == '0.5x'}" (click)="speedSelected = '0.5x'">
+        0.5x
+      </button>
+      <button [ngClass]="{active: speedSelected == '1x'}" (click)="speedSelected = '1x'">
+        1x
+      </button>
+      <button [ngClass]="{active: speedSelected == '2x'}" (click)="speedSelected = '2x'">
+        2x
+      </button>
+    </div>
+
+    <button class="run-button" (click)="runRandomDistribution()">
+      Rodar
+    </button>
+  </div>
+</div>
