@@ -4,8 +4,14 @@ export function generateRandomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export function generateTwoRandomSum(min: number, max: number) {
-  const first = generateRandomNumber(min, max / 2);
-  const second = generateRandomNumber(min, max / 2);
-  return Math.min(first + second, max);
+export function generateRandomVariablesSum(variablesQuantity: number, min: number, max: number): number {
+  const randomVariables = [];
+
+  for (let i = 0; i < variablesQuantity; i++) {
+    randomVariables.push(generateRandomNumber(min, max / variablesQuantity));
+  }
+
+  return randomVariables.reduce((prev, acc) => {
+    return prev + acc;
+  }, 0);
 }

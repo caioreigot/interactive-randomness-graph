@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { GraphEngine } from './GraphEngine';
 import { Bar } from './types';
-import { generateRandomNumber, generateTwoRandomSum } from './utils';
+import { generateRandomVariablesSum } from './utils';
 
 @Component({
   selector: 'app-root',
@@ -21,10 +21,10 @@ export class AppComponent implements AfterViewInit {
   bars: Bar[] = [];
 
   // Quantidade inicial de barras
-  barsQuantity: number = 100;
+  barsQuantity: number = 8000;
 
   // Tempo em segundos que o código irá ficar distribuindo tamanhos aleatoriamente entre as barras
-  randomDistributionTimeoutSeconds: number = 10;
+  randomDistributionTimeoutSeconds: number = 8;
 
   get canvasWidth() {
     return this.ctx?.canvas.width || 0;
@@ -75,7 +75,7 @@ export class AppComponent implements AfterViewInit {
     const interval_id = setInterval(() => {
       for (let i = 0; i < bundleSize; i++) {
         // TO DO: Escolher (pelo parâmetro da função) quantos números aleatórios serão somados
-        const randomIndex = generateTwoRandomSum(0, this.bars.length - 1);
+        const randomIndex = generateRandomVariablesSum(2, 0, this.bars.length - 1);
         this.bars[randomIndex].height += 10;
       }
     }, changeHeightInterval);
