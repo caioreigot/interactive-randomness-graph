@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0",
-    "build": "ng build",
+    "build": "ng build && mv ./dist/interactive-randomness-graph/browser/* ./dist/ && rm -rf ./dist/interactive-randomness-graph",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
