@@ -2,11 +2,11 @@
 <canvas #canvas id="canvas">Your browser does not support canvas</canvas>
 
 <div class="settings-container">
-  <img class="question-button" src="/assets/question.svg" (click)="isQuestionModalOpen = true">
+  <img class="question-button" src="assets/question.svg" (click)="isQuestionModalOpen = true">
 
   <div class="question-modal" *ngIf="isQuestionModalOpen" (click)="closeQuestionModalWhenClickOutside($event)">
     <div class="question-container">
-      <img class="close-button" src="/assets/close.svg" (click)="isQuestionModalOpen = false">
+      <img class="close-button" src="assets/close.svg" (click)="isQuestionModalOpen = false">
 
       <div>
         <h3>
@@ -55,7 +55,7 @@
     title="Abre/fecha as configurações"
     (click)="isSettingsOpen = !isSettingsOpen">
     
-    <img src="/assets/settings.svg">
+    <img src="assets/settings.svg">
   </button>
   
   <div *ngIf="isSettingsOpen" class="settings-options">
